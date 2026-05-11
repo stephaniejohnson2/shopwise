@@ -1,0 +1,400 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Shopwise</title>
+<style>
+
+    body {
+        font-family: Arial, sans-serif;
+        background: #ffe6f2;
+        margin: 0;
+        padding: 20px;
+    }
+
+    /* HEADER */
+    .header {
+        text-align: center;
+        padding: 25px 0;
+        margin-bottom: 25px;
+
+        background: linear-gradient(135deg, #ff4fa3, #ff7ac4, #ffa8d8);
+        border-radius: 16px;
+
+        box-shadow: 0 4px 12px rgba(255, 79, 163, 0.35);
+
+        animation: fadeIn 0.8s ease-out;
+    }
+
+    .header-title {
+        font-size: 38px;
+        font-weight: 800;
+        letter-spacing: 2px;
+        color: white;
+        margin: 0;
+    }
+
+    .tagline {
+        margin-top: 6px;
+        font-size: 16px;
+        color: #ffe6f7;
+        font-weight: 500;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-10px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* SEARCH CONTROLS */
+    .search-controls {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+
+    select, input {
+        padding: 10px;
+        border: 2px solid #ff4fa3;
+        border-radius: 6px;
+        font-size: 16px;
+        outline: none;
+    }
+
+    button {
+        padding: 10px 16px;
+        background: #ff4fa3;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background: #ff2f8f;
+    }
+
+    /* PRODUCT GRID */
+    .results-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 12px;
+    }
+
+    .card {
+        background: white;
+        border-radius: 6px;
+        padding: 12px;
+        box-shadow: 0 1px 3px rgba(255, 79, 163, 0.25);
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        transition: transform 0.1s ease-in-out;
+    }
+
+    .card:hover {
+        transform: scale(1.02);
+    }
+
+    .card-title {
+        font-weight: bold;
+        color: #333;
+        font-size: 16px;
+    }
+
+    .card-store {
+        color: #ff4fa3;
+        font-size: 14px;
+        font-weight: bold;
+    }
+
+    .card-category {
+        font-size: 13px;
+        color: #777;
+    }
+
+    .card-price {
+        font-size: 18px;
+        font-weight: bold;
+        margin-top: 4px;
+        color: #222;
+    }
+
+    .card a {
+        margin-top: 6px;
+        text-decoration: none;
+        color: white;
+        background: #ff4fa3;
+        padding: 8px;
+        text-align: center;
+        border-radius: 4px;
+        font-size: 14px;
+    }
+
+    /* POPUP */
+    .popup-bg {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        display: none;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .popup {
+        background: white;
+        padding: 20px;
+        width: 350px;
+        border-radius: 8px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    }
+
+    .popup h2 {
+        margin-top: 0;
+        color: #ff4fa3;
+        font-size: 22px;
+    }
+
+    .close-btn {
+        background: #ff4fa3;
+        color: white;
+        padding: 8px 12px;
+        border-radius: 6px;
+        cursor: pointer;
+        margin-top: 10px;
+        display: inline-block;
+    }
+
+    /* --- Cheapest Store Card Styles --- */
+    .best-price-card {
+        background: #e8f9ee;
+        border: 2px solid #28a745;
+        padding: 12px;
+        border-radius: 10px;
+        margin-bottom: 12px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    }
+
+    .best-price-title {
+        font-weight: 700;
+        font-size: 1rem;
+        color: #28a745;
+        margin-bottom: 6px;
+    }
+
+    .store-card {
+        background: #f7f7f7;
+        padding: 10px;
+        border-radius: 8px;
+        margin-bottom: 8px;
+        border: 1px solid #ddd;
+    }
+
+    .store-name {
+        font-weight: 600;
+    }
+
+    .store-price {
+        float: right;
+        font-weight: 600;
+    }
+
+    /* ⭐ Soft pastel pill tag ⭐ */
+    .price-diff-pill {
+        display: inline-block;
+        padding: 5px 14px;
+        border-radius: 999px;
+        background: linear-gradient(135deg, #ffe6f2, #ffd9ec);
+        color: #ff2f8f;
+        font-size: 13px;
+        font-weight: 600;
+        box-shadow: 0 2px 4px rgba(255, 79, 163, 0.15);
+        margin-top: 8px;
+    }
+
+</style>
+</head>
+<body>
+
+<div class="header">
+    <h1 class="header-title">SHOPWISE</h1>
+    <p class="tagline">Compare prices instantly. Shop smarter, not harder.</p>
+</div>
+
+<div class="search-controls">
+    <select id="category">
+        <option value="">All Categories</option>
+        <option value="Home Essentials">Home Essentials</option>
+        <option value="Stationery">Stationery</option>
+        <option value="Beauty">Beauty</option>
+        <option value="Books">Books</option>
+        <option value="Electronics">Electronics</option>
+    </select>
+
+    <input type="text" id="search" placeholder="Search products...">
+
+    <button id="searchBtn">Search</button>
+</div>
+
+<div id="results" class="results-grid"></div>
+
+<!-- POPUP -->
+<div id="popup-bg" class="popup-bg">
+    <div class="popup">
+        <h2 id="popup-title"></h2>
+        <div id="popup-content"></div>
+        <div class="close-btn" onclick="closePopup()">Close</div>
+    </div>
+</div>
+
+<script>
+    const products = [{"category": "Home Essentials", "name": "Andrex Toilet Tissue", "store": "Tesco", "price": 2.95, "link": "https://www.tesco.com/shop/en-GB/products/309762431?_gl=1*1crlow5*_up*MQ..*_ga*MTAzODc2OTQ1Ni4xNzc3NDg2MjAz*_ga_H653QXESTP*czE3Nzc0ODYyMDIkbzEkZzAkdDE3Nzc0ODYyNjkkajYwJGwwJGgyMjc5NDcyMTY.*_ga_33B19D36CY*czE3Nzc0ODYyMDIkbzEkZzEkdDE3Nzc0ODYzMDYkajYwJGwwJGgzNjY1ODc5MDU."}, {"category": "Home Essentials", "name": "Andrex Toilet Tissue", "store": "ASDA", "price": 2.76, "link": "https://www.asda.com/groceries/product/standard-toilet-roll/andrex-complete-clean-toilet-tissue-4-rolls/7150988"}, {"category": "Home Essentials", "name": "Andrex Toilet Tissue", "store": "Sainsbury's", "price": 2.95, "link": "https://www.sainsburys.co.uk/gol-ui/product/andrex-complete-clean-toilet-rolls-x4"}, {"category": "Home Essentials", "name": "Fairy Washing Up Liquid", "store": "Tesco", "price": 0.89, "link": "https://www.tesco.com/shop/en-GB/products/313518537?_gl=1*lduc8q*_up*MQ..*_ga*MTAzODc2OTQ1Ni4xNzc3NDg2MjAz*_ga_H653QXESTP*czE3Nzc0ODYyMDIkbzEkZzAkdDE3Nzc0ODYyNjkkajYwJGwwJGgyMjc5NDcyMTY.*_ga_33B19D36CY*czE3Nzc0ODYyMDIkbzEkZzEkdDE3Nzc0ODY1OTgkajYwJGwwJGgzNjY1ODc5MDU."}, {"category": "Home Essentials", "name": "Fairy Washing Up Liquid", "store": "ASDA", "price": 1.8, "link": "https://www.asda.com/groceries/product/washing-up-liquid/fairy-original-washing-up-liquid-green-with-liftaction-654-ml/7610595"}, {"category": "Home Essentials", "name": "Fairy Washing Up Liquid", "store": "Sainsbury's", "price": 1.0, "link": "https://www.sainsburys.co.uk/gol-ui/product/fairy-original-green-washing-up-liquid-with-lift-action-320ml"}, {"category": "Home Essentials", "name": "Domestos Thick Bleach", "store": "Tesco", "price": 1.35, "link": "https://www.tesco.com/shop/en-GB/products/320407203?_gl=1*19b50lf*_up*MQ..*_ga*MTAzODc2OTQ1Ni4xNzc3NDg2MjAz*_ga_H653QXESTP*czE3Nzc0ODY0NDYkbzEkZzAkdDE3Nzc0ODY0NDYkajYwJGwwJGg5OTk0OTA4MDY.*_ga_33B19D36CY*czE3Nzc0ODYyMDIkbzEkZzEkdDE3Nzc0ODY3NjUkajYwJGwwJGgzNjY1ODc5MDU."}, {"category": "Home Essentials", "name": "Domestos Thick Bleach", "store": "ASDA", "price": 1.27, "link": "https://www.asda.com/groceries/product/bleach-disinfectants/domestos-thick-bleach-original-750-ml/54179"}, {"category": "Home Essentials", "name": "Domestos Thick Bleach", "store": "Sainsbury's", "price": 1.35, "link": "https://www.sainsburys.co.uk/gol-ui/product/domestos-original-thick-bleach-toilet-multipurpose-cleaner-750ml"}, {"category": "Home Essentials", "name": "Flash Multi-Surface Cleaner", "store": "Tesco", "price": 2.5, "link": "https://www.tesco.com/shop/en-GB/products/320380198?_gl=1*ob75u5*_up*MQ..*_ga*MTAzODc2OTQ1Ni4xNzc3NDg2MjAz*_ga_H653QXESTP*czE3Nzc0ODY0NDYkbzEkZzAkdDE3Nzc0ODY0NDYkajYwJGwwJGg5OTk0OTA4MDY.*_ga_33B19D36CY*czE3Nzc0ODYyMDIkbzEkZzEkdDE3Nzc0ODY5NDUkajYwJGwwJGgzNjY1ODc5MDU."}, {"category": "Home Essentials", "name": "Flash Multi-Surface Cleaner", "store": "ASDA", "price": 2.35, "link": "https://www.asda.com/groceries/product/bleach-disinfectants/flash-bleach-cleaning-spray-800ml/7499853"}, {"category": "Home Essentials", "name": "Flash Multi-Surface Cleaner", "store": "Sainsbury's", "price": 3.25, "link": "https://www.sainsburys.co.uk/gol-ui/product/flash-spray-wipe-done-mandarin-hygiene-kitchen-cleaning-spray-800ml"}, {"category": "Home Essentials", "name": "Surf Laundry Detergent", "store": "Tesco", "price": 3.3, "link": "https://www.tesco.com/shop/en-GB/products/317285131?_gl=1*r5hxgd*_up*MQ..*_ga*MTAzODc2OTQ1Ni4xNzc3NDg2MjAz*_ga_H653QXESTP*czE3Nzc0ODY0NDYkbzEkZzAkdDE3Nzc0ODY0NDYkajYwJGwwJGg5OTk0OTA4MDY.*_ga_33B19D36CY*czE3Nzc0ODYyMDIkbzEkZzEkdDE3Nzc0ODcxNzckajYwJGwwJGgzNjY1ODc5MDU."}, {"category": "Home Essentials", "name": "Surf Laundry Detergent", "store": "ASDA", "price": 2.8, "link": "https://www.asda.com/groceries/product/washing-liquid-gel/surf-laundry-washing-tropical-lily-24-washes/9139614"}, {"category": "Home Essentials", "name": "Surf Laundry Powder", "store": "Sainsbury's", "price": 3.5, "link": "https://www.sainsburys.co.uk/gol-ui/product/surf-tropical-lily-concentrated-liquid-laundry-detergent-24-washes-648ml"}, {"category": "Home Essentials", "name": "Dettol Antibacterial Spray", "store": "Tesco", "price": 2.3, "link": "https://www.tesco.com/shop/en-GB/products/264843462?_gl=1*2zdjzs*_up*MQ..*_ga*MTAzODc2OTQ1Ni4xNzc3NDg2MjAz*_ga_H653QXESTP*czE3Nzc0ODY0NDYkbzEkZzAkdDE3Nzc0ODY0NDYkajYwJGwwJGg5OTk0OTA4MDY.*_ga_33B19D36CY*czE3Nzc0ODYyMDIkbzEkZzEkdDE3Nzc0ODczOTUkajYwJGwwJGgzNjY1ODc5MDU."}, {"category": "Home Essentials", "name": "Dettol Antibacterial Spray", "store": "ASDA", "price": 2.08, "link": "https://www.asda.com/groceries/product/bleach-disinfectants/dettol-antibacterial-surface-cleanser-spray-750ml/6854044"}, {"category": "Home Essentials", "name": "Dettol Antibacterial Spray", "store": "Sainsbury's", "price": 2.3, "link": "https://www.sainsburys.co.uk/gol-ui/product/dettol-antibacterial-multi-surface-cleaning-spray-750ml"}, {"category": "Home Essentials", "name": "Air Wick Freshener", "store": "Tesco", "price": 3.5, "link": "https://www.tesco.com/shop/en-GB/products/264943954?_gl=1*1mt62u8*_up*MQ..*_ga*MTAzODc2OTQ1Ni4xNzc3NDg2MjAz*_ga_H653QXESTP*czE3Nzc0ODY0NDYkbzEkZzAkdDE3Nzc0ODY0NDYkajYwJGwwJGg5OTk0OTA4MDY.*_ga_33B19D36CY*czE3Nzc0ODYyMDIkbzEkZzEkdDE3Nzc0ODc3ODkkajYwJGwwJGgzNjY1ODc5MDU."}, {"category": "Home Essentials", "name": "Air Wick Freshener", "store": "ASDA", "price": 2.22, "link": "https://www.asda.com/groceries/product/air-wick/air-wick-pure-aerosol-spring-delight-air-freshener-250ml/5203741"}, {"category": "Home Essentials", "name": "Air Wick Freshener", "store": "Sainsbury's", "price": 3.0, "link": "https://www.sainsburys.co.uk/gol-ui/product/air-wick-spring-delight-pure-aerosol-air-freshener-250ml"}, {"category": "Stationery", "name": "Oxford A4 Notebook (Pack of 3)", "store": "Oxford Notebooks", "price": 16.99, "link": "https://oxfordnotebooks.co.uk/products/oxford-campus-blue-a4-wirebound-ruled-notebooks-pack-of-3"}, {"category": "Stationery", "name": "Oxford A4 Notebook (Pack of 3)", "store": "Amazon", "price": 15.99, "link": "https://www.amazon.co.uk/A4-Notebook-Oxford-Campus-Assorted/dp/B07RZL4MK2?ref_=ast_sto_dp&th=1"}, {"category": "Stationery", "name": "Oxford A4 Notebook (Pack of 3)", "store": "Ryman", "price": 11.99, "link": "https://www.ryman.co.uk/oxford-campus-pastel-a4-wirebound-notebook-pack-of-3-1?&utm_campaign=20539091436&utm_medium=cpc&utm_source=google&gad_source=1&gad_campaignid=20548648942&gbraid=0AAAAADvShRyzl8L0DTXuHq09mDjgAnOdX&gclid=EAIaIQobChMIxpmYoNyTlAMVkZNQBh1fpAWzEAQYASABEgIygvD_BwE"}, {"category": "Stationery", "name": "BIC Cristal Pens (Pack of 10)", "store": "Tesco", "price": 3.4, "link": "https://www.tesco.com/shop/en-GB/products/263331384?srsltid=AfmBOoo6wqECN2V9RWsOsxfrr8OxM-WNWhhjwu6fS7A7b0kKizHeHhDr"}, {"category": "Stationery", "name": "BIC Cristal Pens (Pack of 10)", "store": "Ryman", "price": 4.75, "link": "https://www.rymanbusiness.com/bic-cristal-ballpoint-pen-medium-black-pack-of-10-516353--5?srsltid=AfmBOoo__5kTxVnOX5KtK6s5EFBtnM6oAGhXvSeUtngxHPkLIjhcseqY"}, {"category": "Stationery", "name": "BIC Cristal Pens (Pack of 10)", "store": "Stationery Shop", "price": 4.35, "link": "https://stationeryshop.co.uk/products/bic-original-cristal-ballpoint-pens-pack-of-10?srsltid=AfmBOoonlRaTZ_R95NU4NGWtaRer09UWx5QBLnH2GeY0dZiUBTY3hGv_"}, {"category": "Stationery", "name": "Pritt Stick", "store": "Amazon", "price": 2.25, "link": "https://www.amazon.co.uk/Pritt-Child-Friendly-Activities-Strong-Hold-adhesive/dp/B005I407ME?source=ps-sl-shoppingads-lpcontext&ref_=fplfs&smid=A3P5ROKL5A1OLE&th=1"}, {"category": "Stationery", "name": "Pritt Stick", "store": "Tesco", "price": 2.1, "link": "https://www.tesco.com/shop/en-GB/products/260046755?srsltid=AfmBOoow_rhFn7W42aAVAMn6m49LVZWKTbIQIlVBWIxQgRtYKY6I6-73"}, {"category": "Stationery", "name": "Pritt Stick", "store": "Ryman", "price": 3.99, "link": "https://www.ryman.co.uk/pritt-stick-22g-2"}, {"category": "Stationery", "name": "Casio Calculator", "store": "Argos", "price": 14.0, "link": "https://www.argos.co.uk/product/2259378?utm_custom6=PLA&region_id=04717m&deeplink=true&gclsrc=aw.ds&&cmpid=GS001&_$ja=tsid:59157|acid:804-872-0397|cid:20335845806|agid:|tid:|crid:|nw:x|rnd:6340540076281717356|dvc:c|adp:|mt:|loc:9045535&utm_source=Google&utm_medium=cpc&utm_campaign=20335845806&utm_term=2259378&utm_content=shopping&utm_custom1=&utm_custom2=804-872-0397&GPDP=true&gad_source=1&gad_campaignid=19671820927&gbraid=0AAAAAD9II9kBgawowr5KJIDU3wGBE_ezt&gclid=EAIaIQobChMIx9-ryOCTlAMV45VQBh1J5jorEAQYASABEgIiM_D_BwE"}, {"category": "stationery", "name": "Casio Calculator", "store": "Amazon", "price": 12.5, "link": "https://www.amazon.co.uk/Casio-FX-85GTCW-Black-Scientific-Calculator/dp/B0BVW38KQH/ref=asc_df_B0BVW38KQH?mcid=68b226b492bf3e46bee3410bca630a92&th=1&psc=1&tag=googshopuk-21&linkCode=df0&hvadid=696351256704&hvpos=&hvnetw=g&hvrand=6340540076281717356&hvpone=&hvptwo=&hvqmt=&hvdev=c&hvdvcmdl=&hvlocint=&hvlocphy=9045535&hvtargid=pla-2387689000072&psc=1&hvocijid=6340540076281717356-B0BVW38KQH-&hvexpln=0&gad_source=1"}, {"category": "Stationery", "name": "Casio Calculator", "store": "Morrisons", "price": 15.0, "link": "https://groceries.morrisons.com/products/Casio-FX-83GTCW-Black-Scientific-Calculator/112918086"}, {"category": "Beauty", "name": "Tresemme Moisture Rich Shampoo", "store": "Boots", "price": 7.0, "link": "https://www.boots.com/tresemme-rich-moisture-shampoo-680ml-10323018?traffic=paid.shopping&gclsrc=aw.ds&gad_source=1&gad_campaignid=19973635567&gbraid=0AAAAA-AdmwToBqmy3LEjzSSPVg1hKXBvw&gclid=EAIaIQobChMI6_2fxOGTlAMVU4lQBh2yYg_lEAQYASABEgImkfD_BwE"}, {"category": "Beauty", "name": "Tresemme Moisture Rich Shampoo", "store": "Superdrug", "price": 3.5, "link": "https://www.superdrug.com/hair/shampoo/tresemme-rich-moisture-shampoo-680ml/p/828283?gclsrc=aw.ds&gad_source=1&gad_campaignid=18158841593&gbraid=0AAAAADp4mz-wCDwzXVTyzZJW6f3ko2IG_&gclid=EAIaIQobChMI6_2fxOGTlAMVU4lQBh2yYg_lEAQYAyABEgKOdfD_BwE"}, {"category": "Beauty", "name": "Tresemme Moisture Rich Shampoo", "store": "Amazon", "price": 3.75, "link": "https://www.amazon.co.uk/TRESEMME-Shampoo-Rich-Moisture-900ml/dp/B08C7CDFXF/ref=asc_df_B08C7CDFXF?mcid=cb4ac0a593f83b55af9cd12a33979ad6&th=1&tag=googshopuk-21&linkCode=df0&hvadid=697244682681&hvpos=&hvnetw=g&hvrand=6431291985097329343&hvpone=&hvptwo=&hvqmt=&hvdev=c&hvdvcmdl=&hvlocint=&hvlocphy=1006524&hvtargid=pla-1225152255255&hvocijid=6431291985097329343-B08C7CDFXF-&hvexpln=0&gad_source=1"}, {"category": "Beauty", "name": "CeraVe Hydrating Cleanser", "store": "Boots", "price": 9.37, "link": "https://www.boots.com/cerave-hydrating-cleanser-236ml-10246701?traffic=paid.shopping&gclsrc=aw.ds&gad_source=1&gad_campaignid=21096115648&gbraid=0AAAAA-AdmwRFXXP0XDhyT6JJ80JnDIpog&gclid=EAIaIQobChMIkcnV-eKTlAMVXJJQBh1cFgg_EAQYAiABEgKaqfD_BwE"}, {"category": "Beauty", "name": "CeraVe Hydrating Cleanser", "store": "Superdrug", "price": 12.49, "link": "https://www.superdrug.com/skin/face-wash/cerave-hydrating-cleanser-with-hyaluronic-acid-for-dry-skin-236ml/p/769990"}, {"category": "Beauty", "name": "CeraVe Hydrating Cleanser", "store": "Noli", "price": 9.37, "link": "https://noli.com/products/cerave-hydrating-cleanser-with-hyaluronic-acid?size=236ml&utm_medium=commerceconnector&utm_campaign=clicktobuypdp"}, {"category": "Beauty", "name": "Simple Facial Wash", "store": "Boots", "price": 2.6, "link": "https://www.boots.com/simple-kind-to-skin-facial-wash-refreshing-50ml-10092391?traffic=paid.shopping&gclsrc=aw.ds&gad_source=1&gad_campaignid=23618492144&gbraid=0AAAAA-AdmwQ8Solwsy_rNkoe5tEReBiQj&gclid=EAIaIQobChMI1NiT-eOTlAMVpo9QBh2whytqEAQYASABEgIXRfD_BwE"}, {"category": "Beauty", "name": "Simple Facial Wash", "store": "Amazon", "price": 2.28, "link": "https://www.amazon.co.uk/Simple-Kind-Moisturising-Facial-150ml/dp/B014G4YTN4/ref=sr_1_4?dib=eyJ2IjoiMSJ9.JNiqn8Yo_IsPBpRyQNkl4aPR4I2t4dMz-T7ZeJ16SmRm4slbk9oVqQc6XmutaDR6nvW5sIBrDJlc7vcDet6fXi4gEHjXHhduC1CM46Bk5kQho4HyiZ9y702rq8_BAXlT6di1cx-Su5CXFJPn4ERRt0kR3oo7k_kvlep7Sn6M3P3NcJ_gPdLHOsTM06I971XEk_LaapSkCZFMm5_groh7i-QYohPADZ_3tj7fYING4wUwZZvQr4pNU17ezoY9YsR6OMgXSEUXArSMMGaysZjNLRbTW22k6BIheAzQHL7Laas.IOhDhjBi_cFewuMIyH9Ppa3CGum-o2zscPYHwu_XvXo&dib_tag=se&keywords=simple+face+wash&qid=1777490689&rdc=1&sr=8-4"}, {"category": "Beauty", "name": "Simple Facial Wash", "store": "Superdrug", "price": 4.6, "link": "https://www.superdrug.com/skin/face-wash/simple-kind-to-skin-moisturising-facial-wash-150ml/p/949388?gclsrc=aw.ds&gad_source=1&gad_campaignid=18152693967&gbraid=0AAAAADp4mz8K0QYeCikNpDHXIoe6QKeLk&gclid=EAIaIQobChMI1NiT-eOTlAMVpo9QBh2whytqEAQYAiABEgKaq_D_BwE"}, {"category": "Beauty", "name": "Nivea Soft Cream", "store": "Sainsbury's", "price": 6.85, "link": "https://www.sainsburys.co.uk/gol-ui/product/nivea-soft-moisturising-cream-for-face-hands-and-body-500ml?utm_source=google&utm_medium=free_listing&utm_campaign=merchant_center&deeplink=true"}, {"category": "Beauty", "name": "Nivea Soft Cream", "store": "Amazon", "price": 7.58, "link": "https://www.amazon.co.uk/NIVEA-Refreshing-Moisturising-Nourishing-Absorbing/dp/B086N9YSQ5?source=ps-sl-shoppingads-lpcontext&ref_=fplfs&psc=1&smid=A2KE9UC6KK45VV"}, {"category": "Beauty", "name": "Nivea Soft Cream", "store": "Boots", "price": 6.87, "link": "https://www.boots.com/nivea-soft-moisturiser-for-face-hand-and-body--500ml-10363159?traffic=paid.shopping&gclsrc=aw.ds&gad_source=1&gad_campaignid=21096115648&gbraid=0AAAAA-AdmwRFXXP0XDhyT6JJ80JnDIpog&gclid=EAIaIQobChMIs5K_ieWTlAMVQpBQBh2LiBuLEAQYASABEgKgmvD_BwE"}, {"category": "Books", "name": "Python Crash Course", "store": "Amazon", "price": 20.72, "link": "https://www.amazon.co.uk/Python-Crash-Course-2nd-Edition/dp/1593279280"}, {"category": "Books", "name": "Python Crash Course", "store": "Ebay", "price": 13.5, "link": "https://www.ebay.co.uk/itm/177746112715?_ul=GB&rb_itemId=177746112715&rb_pgeo=GB&var=0&ff=11&mkevt=1&mkcid=1&mkrid=710-53481-19255-0&campid=5339059258&toolid=10044&customid=EAIaIQobChMIg_ih2OaTlAMVJ4xQBh2qghzSEAQYASABEgL9z_D_BwE&gclid=EAIaIQobChMIg_ih2OaTlAMVJ4xQBh2qghzSEAQYASABEgL9z_D_BwE&wbraid=CkEKCQjwtcHPBhD4ARIwAELTQ-kprDg66sGzx_vI5-F2WqdgrxgF4dz58SMl-xVFqUN_j_OHKBL-9lyibQXmGgIyMQ&gbraid=0AAAAADA7Q_JSCm0rasG_-Q3RfnVYMLlN_&adtype=pla&loc_physical_ms=1006524&loc_interest_ms=&gad_source=4&gad_campaignid=20506529270&gbraid=0AAAAADA7Q_JSCm0rasG_-Q3RfnVYMLlN_"}, {"category": "Books", "name": "Atomic Habits", "store": "Amazon", "price": 11.92, "link": "https://www.amazon.co.uk/Atomic-habits-makkelijke-bewezen-gewoontes/dp/9400515979?source=ps-sl-shoppingads-lpcontext&ref_=fplfs&psc=1&smid=A3P5ROKL5A1OLE"}, {"category": "Books", "name": "Atomic Habits", "store": "OnBuy", "price": 5.2, "link": "https://www.onbuy.com/gb/p/atomic-habits-by-james-clear-build-good-habits-english-paperback-reading-books~p110398223/?exta=gshp&extac=gshpfa"}, {"category": "Books", "name": "The Subtle Art of Not Giving a F*ck", "store": "Amazon", "price": 9.49, "link": "https://www.amazon.co.uk/Subtle-Art-Not-Giving-Counterintuitive/dp/0062457713"}, {"category": "Books", "name": "The Subtle Art of Not Giving a F*ck", "store": "Waterstones", "price": 10.99, "link": "https://www.waterstones.com/book/the-subtle-art-of-not-giving-a-f-ck-uk/mark-manson/9780063456242"}, {"category": "Books", "name": "The Study Skills Handbook", "store": "Amazon", "price": 28.95, "link": "https://www.amazon.co.uk/Study-Skills-Handbook-Palgrave/dp/0230573053"}, {"category": "Books", "name": "The Study Skills Handbook", "store": "Waterstones", "price": 17.99, "link": "https://www.waterstones.com/book/the-study-skills-handbook/stella-cottrell/9781350421271"}, {"category": "Electronics", "name": "Samsung 32-inch Monitor", "store": "Amazon", "price": 159.0, "link": "https://www.amazon.co.uk/Samsung-LS32D396GAUXXU-Curved-monitor-Speakers/dp/B0DV9PKRYX/ref=sr_1_1?adgrpid=190250765990&dib=eyJ2IjoiMSJ9.YqXb_z4pxIy1uw-o5E9hls4u2t9afFlmsggN4cTiy2oR8tGrSGjeqmUjZayirA1OsvmnaDUlNRacmuEQBOhRCDOsYz7PUHvNIsuhIEY55wXzpyZdgIHPDk_skPakfpttdVGn91TRPqhgllkzkJFGoY-fZ3beIokDoQG5ODuDNoSAj58peyFSB_xjZQStcLKZs0WUojiKLDFAJH9CyLWJkNKNPUEmEzax47w8YMcuT8A.i36czHDPZ9aCgCH_XEct8fG434wR8QLoqL1vMjJpGI8&dib_tag=se&gad_source=1&hvadid=793401102405&hvdev=c&hvexpln=0&hvlocphy=9045535&hvnetw=g&hvocijid=9294854924222164765--&hvqmt=e&hvrand=9294854924222164765&hvtargid=kwd-295826549446&hydadcr=24988_2434939_337971&keywords=samsung%2B32%2Binch%2Bmonitor&mcid=7bc2f089e2d6331d8cd7d96193f9877d&qid=1777492818&sr=8-1&th=1"}, {"category": "Electronics", "name": "Samsung 32-inch Monitor", "store": "Currys", "price": 219.0, "link": "https://www.currys.co.uk/products/samsung-viewfinity-s7-ls32d700eauxxu-4k-ultra-hd-32-va-led-monitor-black-10266187.html"}, {"category": "Electronics", "name": "Samsung 32-inch Monitor", "store": "Argos", "price": 299.0, "link": "https://www.argos.co.uk/product/7832415?rec=PDP[7223048]:bottomSlider:P1:OHAT:alternatives:7832415:idug1KGUKIXbPAOOq1uW"}, {"category": "Electronics", "name": "Logitech Wireless Mouse M185", "store": "Amazon", "price": 9.78, "link": "https://www.amazon.co.uk/Logitech-Wireless-Windows-Ambidextrous-Design/dp/B00552K0GM/ref=asc_df_B00552K0GM?mcid=f4daa8949f7a3c4cb314a928889e88d4&tag=googshopuk-21&linkCode=df0&hvadid=696385530169&hvpos=&hvnetw=g&hvrand=1539763447845528995&hvpone=&hvptwo=&hvqmt=&hvdev=c&hvdvcmdl=&hvlocint=&hvlocphy=9045535&hvtargid=pla-379102075371&psc=1&hvocijid=1539763447845528995-B00552K0GM-&hvexpln=0&gad_source=1"}, {"category": "Electronics", "name": "Logitech Wireless Mouse M185", "store": "Currys", "price": 8.99, "link": "https://www.currys.co.uk/products/logitech-m196-wireless-optical-mouse-graphite-10267725.html"}, {"category": "Electronics", "name": "Logitech Wireless Mouse M185", "store": "Argos", "price": 9.99, "link": "https://www.argos.co.uk/product/7795916?utm_custom6=PLA&region_id=04717m&deeplink=true&gclsrc=aw.ds&&cmpid=GS001&_$ja=tsid:59157|acid:534-693-8244|cid:20296143496|agid:|tid:|crid:|nw:x|rnd:1539763447845528995|dvc:c|adp:|mt:|loc:9045535&utm_source=Google&utm_medium=cpc&utm_campaign=20296143496&utm_term=7795916&utm_content=shopping&utm_custom1=&utm_custom2=534-693-8244&GPDP=true&gad_source=1&gad_campaignid=19663902642&gbraid=0AAAAAD9II9l2D5v-VIdFRYQTUS0PSJOcA&gclid=EAIaIQobChMIuPDq0u2TlAMVoZlQBh10TDOsEAQYASABEgJ68vD_BwE"}, {"category": "Electronics", "name": "Apple AirPods (2nd Gen)", "store": "Amazon", "price": 74.8, "link": "https://www.amazon.co.uk/Apple-Wireless-Charging-Generation-Refurbished-Black/dp/B07WTQ4YT5/ref=sr_1_1?dib=eyJ2IjoiMSJ9.jraZzIzGJm2LS1IZtCbkts3_TKXxAqjveYEJ6Pe8x8TSIOkbEIKZfYwcQUeXKCbxggSnudYS_H3WiFhZ0Sb6GtASL5fq1iBB0gs_fH4BTFpRmpfcoraEaeEmnVlJIEnooC8VkV_WTUoh1EwiONEtGQYJyZ4HKqdjF9X_D5i815PIQ7l4cxp_CDmQNj8RGl1SlfUJVewp4z62RdY1iJTGZ3Ng232VyEVAe-oK8CVtt9k.Nbtw7tpk0kDPRSM2XMbDjq37vU6euaVi8OT3ZS76WEs&dib_tag=se&keywords=apple+airpods+2nd+generation&qid=1777493444&sr=8-1"}, {"category": "Electronics", "name": "Apple AirPods (2nd Gen)", "store": "OnBuy", "price": 128.62, "link": "https://www.onbuy.com/gb/p/apple-airpods-with-wireless-charging-case-white-renewed~p115351188/?exta=cjunct&source=cj&AID=17045579&CJEVENT=de51f2b7440711f1833c01a90a18b8f6&extac=1413862"}, {"category": "Electronics", "name": "Apple AirPods (2nd Gen)", "store": "Argos", "price": 169.0, "link": "https://www.argos.co.uk/product/3297102?clickSR=slp:term:airpods%202nd%20generation:1:7:1"}, {"category": "Electronics", "name": "Anker PowerCore 20,000mAh Power Bank", "store": "Amazon", "price": 39.99, "link": "https://www.amazon.co.uk/Anker-Portable-Charger-Charging-Battery/dp/B0CXDXP8VR/ref=asc_df_B0CXDXP8VR?mcid=b25f0e75e0ce34f8a4db9fc401f42012&tag=googshopuk-21&linkCode=df0&hvadid=697302033778&hvpos=&hvnetw=g&hvrand=5362543015766411808&hvpone=&hvptwo=&hvqmt=&hvdev=c&hvdvcmdl=&hvlocint=&hvlocphy=9045535&hvtargid=pla-2300799849009&psc=1&hvocijid=5362543015766411808-B0CXDXP8VR-&hvexpln=0&gad_source=1"}, {"category": "Electronics", "name": "Anker PowerCore 20,000mAh Power Bank", "store": "Argos", "price": 34.99, "link": "https://www.argos.co.uk/product/7990151?utm_custom6=PLA&region_id=04717m&deeplink=true&gclsrc=aw.ds&&cmpid=GS001&_$ja=tsid:59157|acid:534-693-8244|cid:20296143496|agid:|tid:|crid:|nw:x|rnd:5362543015766411808|dvc:c|adp:|mt:|loc:9045535&utm_source=Google&utm_medium=cpc&utm_campaign=20296143496&utm_term=7990151&utm_content=shopping&utm_custom1=&utm_custom2=534-693-8244&GPDP=true&gad_source=1&gad_campaignid=19663902642&gbraid=0AAAAAD9II9l2D5v-VIdFRYQTUS0PSJOcA&gclid=EAIaIQobChMI3OOg9--TlAMVdpxQBh3lpC4UEAQYASABEgLkmPD_BwE"}, {"category": "Electronics", "name": "Sony WH-CH520 Wireless Headphones", "store": "Amazon", "price": 31.78, "link": "https://www.amazon.co.uk/Sony-WH-CH520-Wireless-Bluetooth-Headphones-Black/dp/B0BTJD6LCL/ref=asc_df_B0BTJD6LCL?mcid=acf13ed47a103a65844989d28e4227aa&th=1&psc=1&tag=googshopuk-21&linkCode=df0&hvadid=696558422354&hvpos=&hvnetw=g&hvrand=8333173209380315453&hvpone=&hvptwo=&hvqmt=&hvdev=c&hvdvcmdl=&hvlocint=&hvlocphy=9045535&hvtargid=pla-1964263222500&psc=1&hvocijid=8333173209380315453-B0BTJD6LCL-&hvexpln=0&gad_source=1"}, {"category": "Electronics", "name": "Sony WH-CH520 Wireless Headphones", "store": "Currys", "price": 34.99, "link": "https://www.currys.co.uk/products/sony-whch520c-wireless-bluetooth-headphones-beige-10247635.html?srcid=198&cmpid=ppc~gg~0090+(Shopping+Ads)+Headphones+-+PMAX~~Exact~20699407160~&mctag=gg_goog_7904&kwid=GOOGLE&device=c&ds_kids=&tgtid=0090+(Shopping+Ads)+Headphones+-+PMAX&gclsrc=aw.ds&&gad_source=1&gad_campaignid=20699414564&gbraid=0AAAAAD7JKSJDYR__CQozL_WPf-rE7vaIG&gclid=EAIaIQobChMImZWHpvCTlAMVmJhQBh2swwx0EAQYAyABEgIR_vD_BwE"}, {"category": "Electronics", "name": "Sony WH-CH520 Wireless Headphones", "store": "Ebay", "price": 25.99, "link": "https://www.ebay.co.uk/itm/267652129503?_ul=UK&mkevt=1&mkcid=1&mkrid=710-53481-19255-0&campid=5338703918&toolid=20006&_xiid=267652129503&customid=EAIaIQobChMImZWHpvCTlAMVmJhQBh2swwx0EAQYBSABEgJTFfD_BwE%7C0AAAAADtppYetR8z-TaexdqhoBMdkiEaMS%7CCkEKCQjwtcHPBhD4ARIwAELTQ-kZ6adnN7ivenU0tfHlfyy9kk_0t069qRaS8V7spllTSuJdtk8QsU6zymSHGgI1ag&gclid=EAIaIQobChMImZWHpvCTlAMVmJhQBh2swwx0EAQYBSABEgJTFfD_BwE&gbraid=0AAAAADtppYetR8z-TaexdqhoBMdkiEaMS&wbraid=CkEKCQjwtcHPBhD4ARIwAELTQ-kZ6adnN7ivenU0tfHlfyy9kk_0t069qRaS8V7spllTSuJdtk8QsU6zymSHGgI1ag&loc_interest_ms=&loc_physical_ms=9045535&adtype=pla&gad_source=1&gad_campaignid=20803169713&gbraid=0AAAAADtppYetR8z-TaexdqhoBMdkiEaMS"}, {"category": "Electronics", "name": "Echo Dot (5th Gen)", "store": "Amazon", "price": 54.99, "link": "https://www.amazon.co.uk/echo-dot-2022/dp/B09B8YWXDF/ref=asc_df_B09B8YWXDF?mcid=2d05e65330b03700a46552bfd8c6cbc8&th=1&psc=1&tag=googshopuk-21&linkCode=df0&hvadid=696354108603&hvpos=&hvnetw=g&hvrand=13998725673657482021&hvpone=&hvptwo=&hvqmt=&hvdev=c&hvdvcmdl=&hvlocint=&hvlocphy=9045535&hvtargid=pla-1872160608158&psc=1&hvocijid=13998725673657482021-B09B8YWXDF-&hvexpln=0&gad_source=1"}, {"category": "Electronics", "name": "Echo Dot (5th Gen)", "store": "OnBuy", "price": 40.0, "link": "https://www.onbuy.com/gb/p/all-new-battery-base-for-echo-dot-5th-generation-made-for-amazon-white~p73596799/?exta=cjunct&source=cj&AID=17045579&CJEVENT=d2cac8d2440811f181ac019e0a18ba73&extac=4609531"}, {"category": "Electronics", "name": "JBL GO 4 Portable Speaker", "store": "Amazon", "price": 29.99, "link": "https://www.amazon.co.uk/JBL-Ultra-Portable-Bluetooth-PlaytimeBoost-Waterproof/dp/B0CX5C6WP3?th=1"}, {"category": "Electronics", "name": "JBL GO 4 Portable Speaker", "store": "JBL", "price": 27.99, "link": "https://uk.jbl.com/JBLGO4PINK.html?utm_source=google&utm_medium=cpc&utm_campaign=Shopping%20-%20%231%20-%20Portable%20Audio%20-%20Product%20terms%20-%20JBL%20UK&utm_id=14232519561&utm_term=&gad_source=1&gad_campaignid=14232519561&gbraid=0AAAAADsfFpblo9lt5fhrUo_xAw8B4H-C2&gclid=EAIaIQobChMIudG1xfGTlAMVb5pQBh0QuQdmEAQYASABEgJa8_D_BwE"}, {"category": "Electronics", "name": "JBL GO 4 Portable Speaker", "store": "Argos", "price": 29.99, "link": "https://www.argos.co.uk/product/4637754?utm_custom6=LIA&deeplink=true&gclsrc=aw.ds&&cmpid=GS001&_$ja=tsid:59157|acid:416-707-6621|cid:20248059078|agid:|tid:|crid:|nw:x|rnd:10861251300736278073|dvc:c|adp:|mt:|loc:9045535&utm_source=Google&utm_medium=cpc&utm_campaign=20248059078&utm_term=4637754&utm_content=shopping&utm_custom1=&utm_custom2=416-707-6621&GPDP=true&gad_source=1&gad_campaignid=19663905000&gbraid=0AAAAAD9II9ktOpPlaORlaivVtsMHLoqFy&gclid=EAIaIQobChMIudG1xfGTlAMVb5pQBh0QuQdmEAQYAiABEgKZlvD_BwE"}, {"category": "Electronics", "name": "JBL Tune 520BT Headphones", "store": "Amazon", "price": 23.0, "link": "https://www.amazon.co.uk/JBL-Wireless-Headphones-Bluetooth-Hands-Free-black/dp/B0BYWMLVG1/ref=asc_df_B0BYWMLVG1?mcid=a60f54167cdd3003ad38419bb437b37a&tag=googshopuk-21&linkCode=df0&hvadid=696452133734&hvpos=&hvnetw=g&hvrand=5108039100583325706&hvpone=&hvptwo=&hvqmt=&hvdev=c&hvdvcmdl=&hvlocint=&hvlocphy=9045535&hvtargid=pla-2116224174847&psc=1&hvocijid=5108039100583325706-B0BYWMLVG1-&hvexpln=0&gad_source=1"}, {"category": "Electronics", "name": "JBL Tune 520BT Headphones", "store": "A1 Tech Deals", "price": 18.99, "link": "https://a1techdeals.com/product/jbl-tune-520bt-headphones-black?gad_source=1&gad_campaignid=20745007396&gbraid=0AAAAApMrWOdMU0KdvYuFk0_5saTdWqOPx&gclid=EAIaIQobChMIhqfj2vKTlAMVWZ1QBh0M_Ag2EAQYAiABEgIf-vD_BwE"}, {"category": "Electronics", "name": "Anker Bluetooth Speaker Soundcore Mini", "store": "Amazon", "price": 32.23, "link": "https://www.amazon.co.uk/Bluetooth-Anker-SoundCore-Portable-Playtime-Black/dp/B01HTH3C8S/ref=asc_df_B01HTH3C8S?mcid=29bd810bd620308cbfbdab0d1479a6b2&tag=googshopuk-21&linkCode=df0&hvadid=696452133746&hvpos=&hvnetw=g&hvrand=6050407531472731586&hvpone=&hvptwo=&hvqmt=&hvdev=c&hvdvcmdl=&hvlocint=&hvlocphy=9045535&hvtargid=pla-366883658870&hvocijid=6050407531472731586-B01HTH3C8S-&hvexpln=0&gad_source=1&th=1"}, {"category": "Electronics", "name": "Anker Bluetooth Speaker Soundcore Mini", "store": "CEX", "price": 12.0, "link": "https://uk.webuy.com/product-detail/?id=SACCANKSCMBSSCC&gad_source=1&gad_campaignid=16701138844&gbraid=0AAAAAD4Pb6uWqQ-86AC02HDV8gAlEcGST&gclid=EAIaIQobChMIvbeEtPOTlAMVCYlQBh0SEhkoEAQYAiABEgLDnvD_BwE"}];
+
+    function formatPrice(price) {
+        return "£" + price.toFixed(2);
+    }
+
+    /* ⭐ FINAL POPUP WITH SOFT PASTEL PILL TAGS ⭐ */
+    function openPopup(productName) {
+        const popupBg = document.getElementById("popup-bg");
+        const popupTitle = document.getElementById("popup-title");
+        const popupContent = document.getElementById("popup-content");
+
+        const matches = products
+            .filter(p => p.name === productName)
+            .sort((a, b) => a.price - b.price);
+
+        popupTitle.textContent = "Compare Prices: " + productName;
+
+        const cheapest = matches[0];
+
+        let html = ""
+            + "<div class='best-price-card'>"
+            +     "<div class='best-price-title'>Best Price</div>"
+            +     "<div class='store-name'>" + cheapest.store + "</div>"
+            +     "<div class='store-price'>£" + cheapest.price.toFixed(2) + "</div>"
+            +     "<div style='clear: both;'></div>"
+            +     "<a href='" + cheapest.link + "' target='_blank' style='"
+            +         "display:block;"
+            +         "margin-top:10px;"
+            +         "background:#28a745;"
+            +         "color:white;"
+            +         "padding:8px;"
+            +         "border-radius:6px;"
+            +         "text-align:center;"
+            +         "text-decoration:none;"
+            +     "'>Visit Store</a>"
+            + "</div>";
+
+        for (let i = 1; i < matches.length; i++) {
+            const s = matches[i];
+            const diff = s.price - cheapest.price;
+            const diffLabel = "+£" + diff.toFixed(2) + " more";
+
+            html += ""
+                + "<div class='store-card'>"
+                +     "<span class='store-name'>" + s.store + "</span>"
+                +     "<span class='store-price'>£" + s.price.toFixed(2) + "</span>"
+                +     "<div style='clear: both;'></div>"
+
+                // ⭐ Soft pastel pill
+                +     "<div class='price-diff-pill'>" + diffLabel + "</div>"
+
+                +     "<a href='" + s.link + "' target='_blank' style='"
+                +         "display:block;"
+                +         "margin-top:10px;"
+                +         "background:#ff4fa3;"
+                +         "color:white;"
+                +         "padding:6px;"
+                +         "border-radius:6px;"
+                +         "text-align:center;"
+                +         "text-decoration:none;"
+                +     "'>Visit Store</a>"
+                + "</div>";
+        }
+
+        popupContent.innerHTML = html;
+        popupBg.style.display = "flex";
+    }
+
+    function closePopup() {
+        document.getElementById("popup-bg").style.display = "none";
+    }
+
+    function renderProducts(list) {
+        const grid = document.getElementById("results");
+        grid.innerHTML = "";
+
+        list.forEach(item => {
+            const card = document.createElement("div");
+            card.className = "card";
+
+            const title = document.createElement("div");
+            title.className = "card-title";
+            title.textContent = item.name;
+            card.appendChild(title);
+
+            const store = document.createElement("div");
+            store.className = "card-store";
+            store.textContent = item.store;
+            card.appendChild(store);
+
+            const cat = document.createElement("div");
+            cat.className = "card-category";
+            cat.textContent = item.category;
+            card.appendChild(cat);
+
+            const price = document.createElement("div");
+            price.className = "card-price";
+            price.textContent = formatPrice(item.price);
+            card.appendChild(price);
+
+            const link = document.createElement("a");
+            link.href = item.link;
+            link.target = "_blank";
+            link.textContent = "View product";
+            card.appendChild(link);
+
+            const compareBtn = document.createElement("button");
+            compareBtn.textContent = "Compare prices";
+            compareBtn.style.marginTop = "6px";
+            compareBtn.onclick = () => openPopup(item.name);
+            card.appendChild(compareBtn);
+
+            grid.appendChild(card);
+        });
+    }
+
+    function applyFilters() {
+        const term = document.getElementById("search").value.toLowerCase();
+        const category = document.getElementById("category").value;
+
+        const filtered = products.filter(p => {
+            const matchesText =
+                p.name.toLowerCase().includes(term) ||
+                p.store.toLowerCase().includes(term);
+
+            const matchesCategory =
+                category === "" || p.category === category;
+
+            return matchesText && matchesCategory;
+        });
+
+        renderProducts(filtered);
+    }
+
+    document.getElementById("searchBtn").addEventListener("click", applyFilters);
+    document.getElementById("search").addEventListener("input", applyFilters);
+    document.getElementById("category").addEventListener("change", applyFilters);
+
+    renderProducts(products);
+</script>
+
+</body>
+</html>
